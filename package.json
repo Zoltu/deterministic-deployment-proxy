@@ -20,7 +20,6 @@
 		"typescript": "3.4.5"
 	},
 	"scripts": {
-		"build": "ts-node scripts/compile.ts",
-		"prepublishOnly": "npm run build"
+		"build": "ts-node scripts/compile.ts"
 	}
 }
