@@ -1,6 +1,5 @@
 import { promises as filesystem } from 'fs'
 import * as path from 'path'
-import { AbiFunction, AbiEvent } from 'ethereum'
 import { CompilerOutput, CompilerInput, compileStandardWrapper, CompilerOutputContract } from 'solc'
 import { rlpEncode } from '@zoltu/rlp-encoder'
 import { keccak256 } from 'js-sha3'
@@ -18,34 +17,35 @@ export async function ensureDirectoryExists(absoluteDirectoryPath: string) {
 
 async function doStuff() {
 	const compilerOutput = await compileContracts()
-	const contract = compilerOutput.contracts['deterministic-deployment-proxy.sol']['DeterministicDeploymentProxy']
+	const contract = compilerOutput.contracts['deterministic-deployment-proxy.yul']['Proxy']
 	await ensureDirectoryExists(path.join(__dirname, '..', '/output/'))
-	await writeAbiJson(contract.abi)
 	await writeBytecode(contract.evm.bytecode.object)
 	await writeFactoryDeployerTransaction(contract)
 }
 
 async function compileContracts(): Promise<CompilerOutput> {
-	const solidityFilePath = path.join(__dirname, '..', 'source', 'deterministic-deployment-proxy.sol')
+	const solidityFilePath = path.join(__dirname, '..', 'source', 'deterministic-deployment-proxy.yul')
 	const soliditySourceCode = await filesystem.readFile(solidityFilePath, 'utf8')
 	const compilerInput: CompilerInput = {
-		language: "Solidity",
+		language: "Yul",
 		settings: {
 			optimizer: {
 				enabled: true,
-				runs: 500
+				details: {
+					yul: true,
+				},
 			},
 			outputSelection: {
 				"*": {
 					"*": [ "abi", "evm.bytecode.object", "evm.gasEstimates" ]
-				}
-			}
+				},
+			},
 		},
 		sources: {
-			'deterministic-deployment-proxy.sol': {
-				content: soliditySourceCode
-			}
-		}
+			'deterministic-deployment-proxy.yul': {
+				content: soliditySourceCode,
+			},
+		},
 	}
 	const compilerInputJson = JSON.stringify(compilerInput)
 	const compilerOutputJson = compileStandardWrapper(compilerInputJson)
@@ -55,6 +55,7 @@ async function compileContracts(): Promise<CompilerOutput> {
 		let concatenatedErrors = "";
 
 		for (let error of errors) {
+			if (/Yul is still experimental/.test(error.message)) continue
 			concatenatedErrors += error.formattedMessage + "\n";
 		}
 
@@ -66,20 +67,13 @@ async function compileContracts(): Promise<CompilerOutput> {
 	return compilerOutput
 }
 
-async function writeAbiJson(abi: (AbiFunction | AbiEvent)[]) {
-	const filePath = path.join(__dirname, '../output/abi.json')
-	const fileContents = JSON.stringify(abi, undefined, '\t')
-	return await filesystem.writeFile(filePath, fileContents, { encoding: 'utf8', flag: 'w' })
-}
-
 async function writeBytecode(bytecode: string) {
 	const filePath = path.join(__dirname, '..', 'output', `bytecode.txt`)
 	await filesystem.writeFile(filePath, bytecode, { encoding: 'utf8', flag: 'w' })
 }
 
 async function writeFactoryDeployerTransaction(contract: CompilerOutputContract) {
-	// https://github.com/ethereum/solidity/issues/6724 2x seems to be enough for this case... :this-is-fine:
-	const deploymentGas = Number.parseInt(contract.evm.gasEstimates!.creation.totalCost) * 2
+	const deploymentGas = 100000 // actual gas costs last measure: 59159; we don't want to run too close though because gas costs can change in forks and we want our address to be retained
 	const deploymentBytecode = contract.evm.bytecode.object
 
 	const nonce = new Uint8Array(0)

@@ -1,0 +1,16 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "compile",
+			"cwd": "${workspaceFolder}",
+			"runtimeArgs": [ "-r", "ts-node/register", ],
+			"args": [ "${workspaceFolder}/scripts/compile.ts", ],
+			"env": {
+				"TS_NODE_PROJECT": "${workspaceFolder}/tsconfig.json",
+			}
+		},
+	]
+}

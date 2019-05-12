@@ -3,7 +3,7 @@ set -x
 JSON_RPC="http://localhost:1234"
 
 # start geth in a local container
-GETH_CONTAINER_ID=$(docker container run --rm -d -p 1234:8545 -e GETH_VERBOSITY=3 keydonix/geth-clique)
+docker container run --rm -d --name deployment-proxy-geth -p 1234:8545 -e GETH_VERBOSITY=3 keydonix/geth-clique
 # wait for geth to become responsive
 until $(curl --output /dev/null --silent --fail $JSON_RPC -X 'POST' -H 'Content-Type: application/json' --data "{\"jsonrpc\":\"2.0\", \"id\":1, \"method\": \"net_version\", \"params\": []}"); do sleep 1; done
 
@@ -22,19 +22,14 @@ curl $JSON_RPC -X 'POST' -H 'Content-Type: application/json' --data "{\"jsonrpc\
 
 # deploy our contract
 # contract: pragma solidity 0.5.8; contract Apple {function banana() external pure returns (uint8) {return 42;}}
-DEPLOY_SIGNATURE="9c4ae2d0"
-BYTECODE_OFFSET="0000000000000000000000000000000000000000000000000000000000000040"
-SALT="0000000000000000000000000000000000000000000000000000000000000000"
-BYTECODE_LENGTH="0000000000000000000000000000000000000000000000000000000000000098"
-BYTECODE="6080604052348015600f57600080fd5b50607a8061001e6000396000f3fe6080604052348015600f57600080fd5b506004361060285760003560e01c8063c3cafc6f14602d575b600080fd5b60336049565b6040805160ff9092168252519081900360200190f35b602a9056fea165627a7a7230582061b42c10c5aed258685366454ca535be5306e982bf70d72569122494bc53deb60029"
-PADDING="0000000000000000"
-curl $JSON_RPC -X 'POST' -H 'Content-Type: application/json' --data "{\"jsonrpc\":\"2.0\", \"id\":1, \"method\": \"eth_sendTransaction\", \"params\": [{\"from\":\"$MY_ADDRESS\",\"to\":\"$DEPLOYER_ADDRESS\", \"data\":\"0x$DEPLOY_SIGNATURE$BYTECODE_OFFSET$SALT$BYTECODE_LENGTH$BYTECODE$PADDING\"}]}"
+BYTECODE="6080604052348015600f57600080fd5b5060848061001e6000396000f3fe6080604052348015600f57600080fd5b506004361060285760003560e01c8063c3cafc6f14602d575b600080fd5b6033604f565b604051808260ff1660ff16815260200191505060405180910390f35b6000602a90509056fea165627a7a72305820ab7651cb86b8c1487590004c2444f26ae30077a6b96c6bc62dda37f1328539250029"
+MY_CONTRACT_ADDRESS=$(curl $JSON_RPC -X 'POST' -H 'Content-Type: application/json' --silent --data "{\"jsonrpc\":\"2.0\", \"id\":1, \"method\": \"eth_call\", \"params\": [{\"from\":\"$MY_ADDRESS\",\"to\":\"$DEPLOYER_ADDRESS\", \"data\":\"0x$BYTECODE\"}, \"latest\"]}" | jq --raw-output '.result')
+curl $JSON_RPC -X 'POST' -H 'Content-Type: application/json' --data "{\"jsonrpc\":\"2.0\", \"id\":1, \"method\": \"eth_sendTransaction\", \"params\": [{\"from\":\"$MY_ADDRESS\",\"to\":\"$DEPLOYER_ADDRESS\", \"gas\":\"0xf4240\", \"data\":\"0x$BYTECODE\"}]}"
 
-# call our contract (we know the address, no matter what chain we ran this script against!)
-MY_CONTRACT_ADDRESS="0x8bb88a8d94804d59f8c2fb06d6605e288382e24f"
+# call our contract (NOTE: MY_CONTRACT_ADDRESS is the same no matter what chain we deploy to!)
 MY_CONTRACT_METHOD_SIGNATURE="c3cafc6f"
 curl $JSON_RPC -X 'POST' -H 'Content-Type: application/json' --data "{\"jsonrpc\":\"2.0\", \"id\":1, \"method\": \"eth_call\", \"params\": [{\"to\":\"$MY_CONTRACT_ADDRESS\", \"data\":\"0x$MY_CONTRACT_METHOD_SIGNATURE\"}, \"latest\"]}"
 # expected result is 0x000000000000000000000000000000000000000000000000000000000000002a (hex encoded 42)
 
 # shutdown Parity
-docker container stop $GETH_CONTAINER_ID
+docker container stop deployment-proxy-geth
