@@ -7,7 +7,6 @@
 		"type": "git",
 		"url": "git@github.com:Zoltu/deterministic-deployment-proxy.git"
 	},
-	"main": "output/index.js",
 	"dependencies": {},
 	"devDependencies": {
 		"@types/elliptic": "6.4.7",
