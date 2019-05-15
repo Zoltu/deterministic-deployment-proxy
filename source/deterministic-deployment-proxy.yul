@@ -10,10 +10,7 @@ object "Proxy" {
 		code {
 			calldatacopy(0, 0, calldatasize())
 			let result := create2(callvalue(), 0, calldatasize(), 0)
-			if iszero(result) {
-				mstore(0, "create2 failed")
-				revert(0, 14)
-			}
+			if iszero(result) { revert(0, 0) }
 			mstore(0, result)
 			return(12, 20)
 		}
