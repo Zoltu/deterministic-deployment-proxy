@@ -18,21 +18,27 @@ Between the use of CREATE2 opcode and the one-time-use-account for the deployer,
 
 ----
 
-## Latest Outputs (as of last readme update, don't trust these to be latest)
+## Latest Outputs
+
+**Note:** as of last readme update; don't trust these to be latest!
+
+Information below is for the proxy at commit `5511264edcaaa4b9eb4028e228c41010fed9c04e`.
+
+It is known to have been deployed to: [Ethereum main-net](https://etherscan.io/tx/0x8ee59123fee2379c81c6fed5fa4310d24b0e40027b3bb04684bde87f0e3caaf1), [Ropsten test-net](https://ropsten.etherscan.io/tx/0x8ee59123fee2379c81c6fed5fa4310d24b0e40027b3bb04684bde87f0e3caaf1), [Görli test-net](https://goerli.etherscan.io/tx/0x8ee59123fee2379c81c6fed5fa4310d24b0e40027b3bb04684bde87f0e3caaf1).
 
 ### Proxy Address
 ```
-7a0d94f55792c434d74a40883c6ed8545e406d12
+0x7A0D94F55792C434d74a40883C6ed8545E406D12
 ```
 
 ### Deployment Transaction
 ```
-f87e8085174876e800830186a08080ad601f80600e600039806000f350fe60003681823780368234f58015156014578182fd5b80825250506014600cf31ba02222222222222222222222222222222222222222222222222222222222222222a02222222222222222222222222222222222222222222222222222222222222222
+0xf87e8085174876e800830186a08080ad601f80600e600039806000f350fe60003681823780368234f58015156014578182fd5b80825250506014600cf31ba02222222222222222222222222222222222222222222222222222222222222222a02222222222222222222222222222222222222222222222222222222222222222
 ```
 
 ### Deployment Signer Address
 ```
-4c8d290a1b368ac4728d83a9e8321fc3af2b39b1
+0x4c8D290a1B368ac4728d83a9e8321fC3af2b39b1
 ```
 
 ### Deployment Gas Price
@@ -44,4 +50,5 @@ f87e8085174876e800830186a08080ad601f80600e600039806000f350fe60003681823780368234
 ```
 100000
 ```
-Note: The actual gas used is 59159, but that can change if the cost of opcodes changes.  To avoid having to move the proxy to a different address, we opted to give excess gas.  Given the gas price, this may result in notable expeses, but since this only needs to be deployed once per chain that is acceptable.
+
+**Note:** The actual gas used is 62095, but that can change if the cost of opcodes changes.  To avoid having to move the proxy to a different address, we opted to give excess gas.  Given the gas price, this may result in notable expenses, but since this only needs to be deployed once per chain that is acceptable.
