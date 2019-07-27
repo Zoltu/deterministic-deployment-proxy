@@ -9,14 +9,14 @@
 	},
 	"dependencies": {},
 	"devDependencies": {
-		"@types/elliptic": "6.4.7",
-		"@types/node": "12.0.0",
-		"@zoltu/rlp-encoder": "1.0.0",
-		"elliptic": "6.4.1",
+		"@types/elliptic": "6.4.9",
+		"@types/node": "12.6.8",
+		"@zoltu/rlp-encoder": "1.0.1",
+		"elliptic": "6.5.0",
 		"js-sha3": "0.8.0",
 		"solc": "0.5.8",
-		"ts-node": "8.1.0",
-		"typescript": "3.4.5"
+		"ts-node": "8.3.0",
+		"typescript": "3.5.3"
 	},
 	"scripts": {
 		"build": "ts-node scripts/compile.ts"

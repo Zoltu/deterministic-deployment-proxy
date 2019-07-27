@@ -1,3 +1,5 @@
+#!/bin/sh
+
 set -x
 
 JSON_RPC="http://localhost:1234"
@@ -5,7 +7,7 @@ JSON_RPC="http://localhost:1234"
 # start geth in a local container
 docker container run --rm -d --name deployment-proxy-geth -p 1234:8545 -e GETH_VERBOSITY=3 keydonix/geth-clique
 # wait for geth to become responsive
-until $(curl --output /dev/null --silent --fail $JSON_RPC -X 'POST' -H 'Content-Type: application/json' --data "{\"jsonrpc\":\"2.0\", \"id\":1, \"method\": \"net_version\", \"params\": []}"); do sleep 1; done
+until curl --silent --fail $JSON_RPC -X 'POST' -H 'Content-Type: application/json' --data "{\"jsonrpc\":\"2.0\", \"id\":1, \"method\": \"net_version\", \"params\": []}"; do sleep 1; done
 
 # extract the variables we need from json output
 MY_ADDRESS="0x913dA4198E6bE1D5f5E4a40D0667f70C0B5430Eb"
