@@ -8,8 +8,8 @@ object "Proxy" {
 	object "runtime" {
 		// deployed code
 		code {
-			calldatacopy(0, 0, calldatasize())
-			let result := create2(callvalue(), 0, calldatasize(), 0)
+			calldatacopy(0x80, 0, calldatasize())
+			let result := create2(callvalue(), 0x80, calldatasize(), 0)
 			if iszero(result) { revert(0, 0) }
 			mstore(0, result)
 			return(12, 20)
