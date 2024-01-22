@@ -24,7 +24,7 @@ Between the use of CREATE2 opcode and the one-time-use-account for the deployer,
 
 Information below is for the proxy at commit `5511264edcaaa4b9eb4028e228c41010fed9c04e`.
 
-It is known to have been deployed to: [Ethereum main-net](https://etherscan.io/tx/0x8ee59123fee2379c81c6fed5fa4310d24b0e40027b3bb04684bde87f0e3caaf1), [Ropsten test-net](https://ropsten.etherscan.io/tx/0x8ee59123fee2379c81c6fed5fa4310d24b0e40027b3bb04684bde87f0e3caaf1), [Görli test-net](https://goerli.etherscan.io/tx/0x8ee59123fee2379c81c6fed5fa4310d24b0e40027b3bb04684bde87f0e3caaf1).
+It is known to have been deployed to: [Ethereum main-net](https://etherscan.io/address/0x7A0D94F55792C434d74a40883C6ed8545E406D12), [Ropsten test-net](https://ropsten.etherscan.io/address/0x7A0D94F55792C434d74a40883C6ed8545E406D12), [Görli test-net](https://goerli.etherscan.io/address/0x7A0D94F55792C434d74a40883C6ed8545E406D12), [Sepolia test-net](https://sepolia.etherscan.io/address/0x7A0D94F55792C434d74a40883C6ed8545E406D12)
 
 ### Proxy Address
 ```
